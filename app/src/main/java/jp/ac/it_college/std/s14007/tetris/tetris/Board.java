@@ -13,6 +13,9 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+
 /**
  * Created by s14007 on 15/11/11.
  */
@@ -21,14 +24,18 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
     private SurfaceHolder holder;
     private DrawThread thread;
     private Bitmap blocks;
-    private Rect[] blockRectArray = new Rect[7];
+    private Tetromino fallingTetromino;
+    private ArrayList<Tetromino> tetrominoList = new ArrayList<>();
+    private long count = 0;
 
     public Board(Context context) {
         super(context);
+        initialize(context);
     }
 
     public Board(Context context, AttributeSet attrs) {
         super(context, attrs);
+        initialize(context);
     }
 
     public Board(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -39,11 +46,35 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
     private void initialize(Context context) {
         getHolder().addCallback(this);
         blocks = BitmapFactory.decodeResource(context.getResources(), R.drawable.block);
-        int side = blocks.getWidth();
-        for (int i = 0; i < blockRectArray.length; i++) {
-            blockRectArray[i] = new Rect(0, i * side, side, (i + 1) * side);
-        }
+        spawnTetoromino();
     }
+
+    private void spawnTetoromino() {
+        fallingTetromino = new Tetromino(this);
+        fallingTetromino.setPosition(5, 23);
+    }
+
+    public boolean fallTetromino() {
+        fallingTetromino.move(Input.Down);
+        if (!isValidPosition()) {
+            fallingTetromino.move(Input.Up);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isValidPosition() {
+        boolean overlapping = false;
+        for (Tetromino fixedTetromino : tetrominoList) {
+            if (fallingTetromino.intersect(fixedTetromino)) {
+                overlapping = true;
+                break;
+            }
+        }
+
+        return !(overlapping || fallingTetromino.isOutOfBounds());
+    }
+
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
@@ -61,22 +92,50 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
         stopThread();
     }
 
+    public void translateCanvasCoordinate(Canvas canvas, RectF rectF, int gx, int gy) {
+        float side = canvas.getWidth() / 10.0f;
+        gy = 20 -gy;
+        rectF.set(side * gx, side * gy, side * (gx + 1), side * (gy + 1));
+    }
 
     public void draw(Canvas canvas) {
         super.draw(canvas);
         if (canvas == null) {
             return;
         }
-        int width = canvas.getWidth();
-        int height = canvas.getHeight();
+        if (!Tetromino.Type.isBitmapInitialized()) {
+            Tetromino.Type.setBlockBitmap(blocks);
+        }
+        updateGame();
 
-        canvas.drawColor(Color.YELLOW);//画面クリア
-        float side = width / 10.0f;
-        RectF destRect = new RectF(0, 0, side, side);
-        Paint paint = new Paint();
 
-        canvas.drawBitmap(blocks, blockRectArray[0], destRect, paint);
+        canvas.drawColor(Color.LTGRAY);//画面クリア
+
+        for (Tetromino tetromino : tetrominoList) {
+            tetromino.draw(canvas);
+        }
+        fallingTetromino.draw(canvas);
     }
+
+    public void send(Input input) {
+        if (input == Input.Rotate) {
+            fallingTetromino.rotate();
+        }
+        if (!isValidPosition()) {
+            fallingTetromino.undo(input);
+        }
+        fallingTetromino.move(input);
+    }
+
+    private void updateGame() {
+        if (count++ % (FPS / 2) != 0) {
+            return;
+        }
+        if (!fallTetromino()) {
+            tetrominoList.add(fallingTetromino);
+            spawnTetoromino();
+        }
+     }
 
     private void startThread() {
         stopThread();
@@ -113,7 +172,7 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
                 try {
                     c = holder.lockCanvas(null);
                     synchronized (holder) {
-                        Board.this.draw(c);
+                        draw(c);
                     }
                 } finally {
                     if (c != null) {

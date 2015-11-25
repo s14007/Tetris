@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+    tools:context=".MainActivity">
 
     <FrameLayout
         android:id="@+id/board_area"
@@ -15,32 +18,73 @@
         android:background="#ccc">
 
         <jp.ac.it_college.std.s14007.tetris.tetris.Board
+            android:id="@+id/board"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-
     </FrameLayout>
 
     <TextView
         android:id="@+id/score_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5sp"
-        android:layout_alignTop="@+id/board_area"
-        android:layout_toRightOf="@+id/board_area"
+        android:layout_alignTop="@id/board_area"
+        android:layout_toRightOf="@id/board_area"
         android:text="@string/score"
         android:textColor="#000"
-        android:textSize="20sp"
-        />
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/score"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/score_label"
-        android:layout_toRightOf="@+id/board_area"
+        android:layout_below="@id/score_label"
+        android:layout_toRightOf="@id/board_area"
         android:gravity="right"
         android:text="0"
         android:textColor="#000"
-        android:textSize="20sp"
-        />
+        android:textSize="20sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/board_area"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:weightSum="4">
+
+        <ImageButton
+            android:id="@+id/left"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:onClick="gameButtonClick"
+            android:scaleType="fitCenter" />
+
+        <ImageButton
+            android:id="@+id/right"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:onClick="gameButtonClick"
+            android:scaleType="fitCenter"
+            android:src="@android:drawable/ic_media_play" />
+
+        <ImageButton
+            android:id="@+id/fall"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:onClick="gameButtonClick"
+            android:scaleType="fitCenter" />
+
+        <ImageButton
+            android:id="@+id/rotate"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:onClick="gameButtonClick"
+            android:scaleType="fitCenter"
+            android:src="@android:drawable/ic_menu_rotate" />
+    </LinearLayout>
 </RelativeLayout>
