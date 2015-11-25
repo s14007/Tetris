@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -100,7 +101,7 @@ public class Tetromino {
     }
 
     public void rotate() {
-        rotate(true);
+        rotate(false);
     }
 
     public void rotate(boolean isCOW) {
@@ -139,6 +140,24 @@ public class Tetromino {
             }
         }
         return false;
+    }
+
+    public Coordinate[] getCoordinates() {
+        return blockBoardCoordinates;
+    }
+
+    public int clearRowAndAdjustDown(int row) {
+        ArrayList<Coordinate> newCoordinates = new ArrayList<>();
+        for (Coordinate coordinate : blockBoardCoordinates) {
+            if (coordinate.y > row) {
+                newCoordinates.add(new Coordinate(coordinate.x, coordinate.y -1));
+            }
+            if (coordinate.y < row) {
+                newCoordinates.add(coordinate);
+            }
+        }
+        blockBoardCoordinates = newCoordinates.toArray(new Coordinate[newCoordinates.size()]);
+        return blockBoardCoordinates.length;
     }
 
     public enum Orientation {
@@ -258,7 +277,6 @@ public class Tetromino {
         }
 
         public Coordinate[] getLocalBlockCoordinates(Orientation orientation) {
-
             return  LOCAL_BLOCK_COORDINATES.get(this).get(orientation);
         }
     }
