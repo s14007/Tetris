@@ -9,6 +9,8 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -17,7 +19,8 @@ import android.widget.Toast;
 
 import java.util.prefs.Preferences;
 
-public class MainActivity extends AppCompatActivity implements Board.Callback {
+public class MainActivity extends AppCompatActivity
+        implements Board.Callback {
     private Board board;
     private Handler handler;
     private int current;
@@ -36,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements Board.Callback {
         matrix.postRotate(90);
         Bitmap fallImage = Bitmap.createBitmap(srcImage, 0, 0,
                 srcImage.getWidth(), srcImage.getHeight(), matrix, true);
-        ((ImageButton)findViewById(R.id.fall)).setImageBitmap(fallImage);
+        ((ImageButton) findViewById(R.id.fall)).setImageBitmap(fallImage);
 
         matrix.postRotate(90);
         Bitmap leftImage = Bitmap.createBitmap(srcImage, 0, 0,
@@ -57,6 +60,13 @@ public class MainActivity extends AppCompatActivity implements Board.Callback {
                 board.send(Input.Right);
                 break;
             case R.id.fall:
+                v.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        Log.e("Log :", "longClick");
+                        return false;
+                    }
+                });
                 board.send(Input.Down);
                 break;
             case R.id.rotate:;
