@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void gameButtonClick(View v) {
+        final BooleanWrapper isContinue = new BooleanWrapper(false);
         switch (v.getId()) {
             case R.id.left:
                 board.send(Input.Left);
@@ -64,14 +65,44 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public boolean onLongClick(View v) {
                         Log.e("Log :", "longClick");
+                        isContinue.value = true;
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (!isContinue.value) {
+                                    return;
+                                }
+                                board.send(Input.Down);
+                                handler.postDelayed(this, 100);
+                            }
+                        });
+                        return false;
+                    }
+                });
+
+                v.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if (event.getAction() == MotionEvent.ACTION_UP) {
+                            isContinue.value = false;
+                        }
                         return false;
                     }
                 });
                 board.send(Input.Down);
+
                 break;
             case R.id.rotate:;
                 board.send(Input.Rotate);
                 break;
+        }
+    }
+
+    private static class BooleanWrapper {
+        public boolean value;
+
+        public BooleanWrapper(boolean value) {
+           this.value = value;
         }
     }
 
@@ -99,13 +130,11 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(MainActivity.this, "Game Over", Toast.LENGTH_SHORT).show();
             }
         });
+        setCurrent(0);
     }
 
     public void saveBestScore() {
-
-
         if (pastRecord < current) {
-
             handler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -115,9 +144,12 @@ public class MainActivity extends AppCompatActivity
                     editor.putInt("bestScore", current);
                     editor.commit();
                     bestScoreView.setText(String.valueOf(preferences.getInt("bestScore", 0)));
+                    Toast.makeText(MainActivity.this, "New record!", Toast.LENGTH_SHORT).show();
                 }
             });
-
+            onGameOver();
+        } else {
+            onGameOver();
         }
     }
 
@@ -129,5 +161,14 @@ public class MainActivity extends AppCompatActivity
             String s = String.valueOf(pastRecord);
             bestScoreView.setText(s);
         }
+    }
+
+    @Override
+    public int getCurrent() {
+        return current;
+    }
+
+    public int getPastRecord() {
+        return pastRecord;
     }
 }

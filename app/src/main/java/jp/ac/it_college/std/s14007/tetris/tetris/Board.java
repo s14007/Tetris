@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.prefs.Preferences;
+
 import android.os.Handler;
 /**
  * Created by s14007 on 15/11/11.
@@ -109,11 +111,9 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
 
     private void gameOver() {
         Log.e("gameOver: ", "gameover");
+//        callback.onGameOver();
         callback.saveBestScore();
         tetrominoList.clear();
-        callback.setCurrent(0);
-        callback.onGameOver();
-
     }
 
     private void clearRows(List<Integer> list) {
@@ -180,7 +180,7 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
             fallingTetromino.undo(input);
             Log.e("tetromino :", "stop");
         } else if (input == Input.Down) {
-            count = 0;
+            count++;
         }
     }
 
@@ -252,5 +252,7 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
         void setCurrent(int current);
         void onGameOver();
         void saveBestScore();
+        int getCurrent();
+        int getPastRecord();
     }
 }
