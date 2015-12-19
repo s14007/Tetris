@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-
+import android.os.Handler;
 /**
  * Created by s14007 on 15/11/11.
  */
@@ -31,7 +31,9 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
     private Tetromino fallingTetromino;
     private ArrayList<Tetromino> tetrominoList = new ArrayList<>();
     private long count = 0;
-    public int current;
+    private int score;
+
+    private Handler handler;
 
     public Board(Context context) {
         super(context);
@@ -107,8 +109,11 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
 
     private void gameOver() {
         Log.e("gameOver: ", "gameover");
+        callback.saveBestScore();
         tetrominoList.clear();
         callback.setCurrent(0);
+        callback.onGameOver();
+
     }
 
     private void clearRows(List<Integer> list) {
@@ -246,5 +251,6 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
         void scoreAdd(int score);
         void setCurrent(int current);
         void onGameOver();
+        void saveBestScore();
     }
 }

@@ -44,6 +44,27 @@
         android:textColor="#000"
         android:textSize="20sp" />
 
+    <TextView
+        android:id="@+id/best_score_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/score"
+        android:layout_toRightOf="@id/board_area"
+        android:text="@string/best_score"
+        android:textColor="#000"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/best_score"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/best_score_label"
+        android:layout_toRightOf="@id/board_area"
+        android:gravity="right"
+        android:text="0"
+        android:textColor="#000"
+        android:textSize="20sp" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -67,8 +88,8 @@
             android:layout_height="100dp"
             android:layout_weight="1"
             android:onClick="gameButtonClick"
-            android:scaleType="fitCenter"
-            android:src="@android:drawable/ic_media_play" />
+            android:src="@android:drawable/ic_media_play"
+            android:scaleType="fitCenter"/>
 
         <ImageButton
             android:id="@+id/fall"
