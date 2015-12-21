@@ -192,7 +192,7 @@ public class Tetromino {
             LOCAL_BLOCK_COORDINATES.put(O, coordinates);
 
             coordinates = new HashMap<>();
-            coordinates.put(Orientation.Right, Coordinate.asArray(-1, 0, 0, 0, -1, -1, 0, 1));
+            coordinates.put(Orientation.Right, Coordinate.asArray(0, -1, 0, 0, 1, 0, 1, 1));
             coordinates.put(Orientation.Down, Coordinate.asArray(1, -1, 0, -1, 0, 0, -1, 0));
             coordinates.put(Orientation.Left, Coordinate.asArray(0, -1, 0, 0, 1, 0, 1, 1));
             coordinates.put(Orientation.Up, Coordinate.asArray(1, -1, 0, -1, 0, 0, -1, 0));
@@ -277,6 +277,14 @@ public class Tetromino {
 
         public Coordinate[] getLocalBlockCoordinates(Orientation orientation) {
             return  LOCAL_BLOCK_COORDINATES.get(this).get(orientation);
+        }
+
+        public static LinkedList<Type> getQueue() {
+            return queue;
+        }
+
+        public static void setQueue(LinkedList<Type> queue) {
+            Type.queue = queue;
         }
     }
 }

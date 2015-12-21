@@ -33,9 +33,6 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
     private Tetromino fallingTetromino;
     private ArrayList<Tetromino> tetrominoList = new ArrayList<>();
     private long count = 0;
-    private int score;
-
-    private Handler handler;
 
     public Board(Context context) {
         super(context);
@@ -89,11 +86,9 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
         for (Tetromino fixedTetromino : tetrominoList) {
             for (Coordinate coordinate : fixedTetromino.getCoordinates()) {
                 if (coordinate.y > 20) {
-                    Log.e("Log :", "over");
                     gameOver();
+                    break;
                 }
-                String m = Integer.toString(coordinate.y);
-                Log.e("Log :", m);
                 rowCounts[coordinate.y]++;
             }
         }
@@ -110,10 +105,12 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void gameOver() {
-        Log.e("gameOver: ", "gameover");
-//        callback.onGameOver();
         callback.saveBestScore();
+        callback.onGameOver();
         tetrominoList.clear();
+        LinkedList<Tetromino.Type> queue = Tetromino.Type.getQueue();
+        queue.clear();
+        Tetromino.Type.setQueue(queue);
     }
 
     private void clearRows(List<Integer> list) {
@@ -176,11 +173,9 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
     public void send(Input input) {
         fallingTetromino.move(input);
         if (!isValidPosition()) {
-            //着地
             fallingTetromino.undo(input);
-            Log.e("tetromino :", "stop");
         } else if (input == Input.Down) {
-            count++;
+            count = 0;
         }
     }
 
@@ -249,10 +244,7 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
 
     public interface Callback {
         void scoreAdd(int score);
-        void setCurrent(int current);
         void onGameOver();
         void saveBestScore();
-        int getCurrent();
-        int getPastRecord();
     }
 }

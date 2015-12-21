@@ -1,5 +1,6 @@
 package jp.ac.it_college.std.s14007.tetris.tetris;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -55,16 +56,71 @@ public class MainActivity extends AppCompatActivity
         final BooleanWrapper isContinue = new BooleanWrapper(false);
         switch (v.getId()) {
             case R.id.left:
+                v.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        isContinue.value = true;
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (!isContinue.value) {
+                                    return;
+                                }
+                                board.send(Input.Left);
+                                handler.postDelayed(this, 100);
+                            }
+                        });
+                        return true;
+                    }
+                });
+
+                v.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if (event.getAction() == MotionEvent.ACTION_UP) {
+                            isContinue.value = false;
+                        }
+                        return false;
+                    }
+                });
                 board.send(Input.Left);
                 break;
+
             case R.id.right:
+                v.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        isContinue.value = true;
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (!isContinue.value) {
+                                    return;
+                                }
+                                board.send(Input.Right);
+                                handler.postDelayed(this, 100);
+                            }
+                        });
+                        return false;
+                    }
+                });
+
+                v.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if (event.getAction() == MotionEvent.ACTION_UP) {
+                            isContinue.value = false;
+                        }
+                        return false;
+                    }
+                });
+
                 board.send(Input.Right);
                 break;
             case R.id.fall:
                 v.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        Log.e("Log :", "longClick");
                         isContinue.value = true;
                         handler.post(new Runnable() {
                             @Override
@@ -89,8 +145,8 @@ public class MainActivity extends AppCompatActivity
                         return false;
                     }
                 });
-                board.send(Input.Down);
 
+                board.send(Input.Down);
                 break;
             case R.id.rotate:;
                 board.send(Input.Rotate);
@@ -111,7 +167,7 @@ public class MainActivity extends AppCompatActivity
         handler.post(new Runnable() {
             @Override
             public void run() {
-                TextView scoreView = (TextView)findViewById(R.id.score);
+                TextView scoreView = (TextView) findViewById(R.id.score);
 //                current = Integer.parseInt(scoreView.getText().toString());
                 current += score;
                 scoreView.setText(String.valueOf(current));
@@ -119,18 +175,14 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    public void setCurrent(int current) {
-        this.current = current;
-    }
-
     public void onGameOver() {
         handler.post(new Runnable() {
             @Override
             public void run() {
+                resetScore();
                 Toast.makeText(MainActivity.this, "Game Over", Toast.LENGTH_SHORT).show();
             }
         });
-        setCurrent(0);
     }
 
     public void saveBestScore() {
@@ -138,37 +190,27 @@ public class MainActivity extends AppCompatActivity
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    TextView bestScoreView = (TextView)findViewById(R.id.best_score);
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                    SharedPreferences preferences = getSharedPreferences("dataSave", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putInt("bestScore", current);
-                    editor.commit();
-                    bestScoreView.setText(String.valueOf(preferences.getInt("bestScore", 0)));
                     Toast.makeText(MainActivity.this, "New record!", Toast.LENGTH_SHORT).show();
+                    editor.apply();
+                    loadBestScore();
                 }
             });
-            onGameOver();
-        } else {
-            onGameOver();
         }
+    }
+
+    public void resetScore() {
+        current = 0;
+        TextView scoreView = (TextView)findViewById(R.id.score);
+        scoreView.setText(String.valueOf(current));
     }
 
     private void loadBestScore() {
         TextView bestScoreView = (TextView)findViewById(R.id.best_score);
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences preferences = getSharedPreferences("dataSave", Context.MODE_PRIVATE);
         pastRecord = preferences.getInt("bestScore", 0);
-        if (pastRecord != 0) {
-            String s = String.valueOf(pastRecord);
-            bestScoreView.setText(s);
-        }
-    }
-
-    @Override
-    public int getCurrent() {
-        return current;
-    }
-
-    public int getPastRecord() {
-        return pastRecord;
+        bestScoreView.setText(String.valueOf(pastRecord));
     }
 }
