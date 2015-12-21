@@ -5,10 +5,13 @@
 以下の機能を実装しました。
 
 ###GameOver  
-画面外までブロックが重なるとゲームオーバーになる  
-###LongClick  
-ボタンの長押しでブロックのスピードが変わる
-###BestScore  
-最高スコアを保持する  
+仕様：画面外までブロックが重なるとゲームオーバーになる  
+実装はBoard.javaのgameOverメソッドからMainActivity.javaのonGameOverメソッドの呼び出しです  
 
-基本はMainActivityでの処理で、Boardから呼び出しました
+###LongClick  
+仕様：ボタンの長押しでブロックのスピードが変わる  
+実装はMainActivity.javaのgameButtonClickメソッドの内容を変更しました  
+
+###BestScore  
+仕様：最高スコアを保持する  
+実装はBoard.javaのgameOverメソッドからMainActivity.javaのsaveBestScoreメソッドの呼び出しです  
